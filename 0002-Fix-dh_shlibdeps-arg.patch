@@ -1,7 +1,7 @@
-From b64a20189c8527f4a2b94c2d88cf8914ff128149 Mon Sep 17 00:00:00 2001
+From daae1bc3f0496100e4668c4e3187fda6289e7a4e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Steven!=20Ragnar=C3=B6k?= <steven@nuclearsandwich.com>
 Date: Mon, 12 Jun 2017 14:54:16 -0400
-Subject: [PATCH 2/2] Fix dh_shlibdeps arg.
+Subject: [PATCH 2/3] Fix dh_shlibdeps arg.
 
 ---
  debian/rules.em | 2 +-
