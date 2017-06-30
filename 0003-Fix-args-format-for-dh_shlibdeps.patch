@@ -1,7 +1,7 @@
-From a0e72c5d79dc09d14ec0dba76d8345ce23ffa3ed Mon Sep 17 00:00:00 2001
+From e6e75133298df801de038bd76ad36618a653b328 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Steven!=20Ragnar=C3=B6k?= <steven@nuclearsandwich.com>
 Date: Thu, 15 Jun 2017 16:13:32 -0400
-Subject: [PATCH 3/3] Fix args format for dh_shlibdeps.
+Subject: [PATCH 3/4] Fix args format for dh_shlibdeps.
 
 We were getting lucky here. dpkg-shlibdeps takes multiple -l args but
 dh_shlibdeps only takes one with paths separated by colons. The last
