@@ -1,4 +1,4 @@
-From e6e75133298df801de038bd76ad36618a653b328 Mon Sep 17 00:00:00 2001
+From 9c01fc77723c5d5c8c47ee799ed79ad5611e868f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Steven!=20Ragnar=C3=B6k?= <steven@nuclearsandwich.com>
 Date: Thu, 15 Jun 2017 16:13:32 -0400
 Subject: [PATCH 3/4] Fix args format for dh_shlibdeps.
@@ -12,10 +12,10 @@ shared libraries that it built and relied on itself this would bust.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/debian/rules.em b/debian/rules.em
-index 254c5c8..392140e 100755
+index 8ef84e5..6c0eae7 100755
 --- a/debian/rules.em
 +++ b/debian/rules.em
-@@ -48,7 +48,7 @@ override_dh_shlibdeps:
+@@ -53,7 +53,7 @@ override_dh_shlibdeps:
  	# in the install tree that was dropped by catkin, and source it.  It will
  	# set things like CMAKE_PREFIX_PATH, PKG_CONFIG_PATH, and PYTHONPATH.
  	if [ -f "@(InstallationPrefix)/setup.sh" ]; then . "@(InstallationPrefix)/setup.sh"; fi && \

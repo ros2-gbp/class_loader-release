@@ -1,4 +1,4 @@
-From a4580d9d0dad3cf3a537a1e4b4051ce87a3bb006 Mon Sep 17 00:00:00 2001
+From 77061aeca8332f7e4bc345b63d50c2c09233b804 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Steven!=20Ragnar=C3=B6k?= <steven@nuclearsandwich.com>
 Date: Fri, 30 Jun 2017 17:40:22 -0400
 Subject: [PATCH 4/4] Add multiarch dirs to dh_shlibdeps.
@@ -8,10 +8,10 @@ Subject: [PATCH 4/4] Add multiarch dirs to dh_shlibdeps.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/debian/rules.em b/debian/rules.em
-index 392140e..f12b680 100755
+index 6c0eae7..41e8f53 100755
 --- a/debian/rules.em
 +++ b/debian/rules.em
-@@ -48,7 +48,7 @@ override_dh_shlibdeps:
+@@ -53,7 +53,7 @@ override_dh_shlibdeps:
  	# in the install tree that was dropped by catkin, and source it.  It will
  	# set things like CMAKE_PREFIX_PATH, PKG_CONFIG_PATH, and PYTHONPATH.
  	if [ -f "@(InstallationPrefix)/setup.sh" ]; then . "@(InstallationPrefix)/setup.sh"; fi && \
