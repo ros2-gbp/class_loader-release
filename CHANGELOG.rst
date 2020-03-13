@@ -2,20 +2,18 @@
 Changelog for package class_loader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.4.1 (2020-01-17)
+1.3.3 (2020-03-13)
 ------------------
 * Use .empty() to check for an empty string. (`#132 <https://github.com/ros/class_loader/issues/132>`_)
 * Fix travis on macOS. (`#135 <https://github.com/ros/class_loader/issues/135>`_)
 * Contributors: Chris Lalancette
 
-1.4.0 (2019-09-18)
+1.3.2 (2019-07-30)
 ------------------
-* Fixed setting AbstractMetaObjectBase base class typeid. (`#127 <https://github.com/nuclearsandwich/class_loader/issues/127>`_)
-* Corrected export of class_loader library. (`#129 <https://github.com/nuclearsandwich/class_loader/issues/129>`_)
-* Reduced the number of threads spun up in stress test. (`#128 <https://github.com/nuclearsandwich/class_loader/issues/128>`_)
-* Contributors: Emerson Knapp, Shane Loretz, bpwilcox
+* Correctly export class_loader library (`#129 <https://github.com/ros/class_loader/pull/129>`_)
+* Contributors: Shane Loretz
 
-1.3.1 (2019-05-08)
+1.3.1 (2019-05.08)
 ------------------
 * Using ament_target_dependencies when possible (`#124 <https://github.com/ros/class_loader/issues/124>`_)
 * Contributors: ivanpauno
