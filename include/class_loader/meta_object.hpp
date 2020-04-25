@@ -29,8 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Note: This header defines a simplication of Poco::MetaObject
-// that allows us to tag MetaObjects with an associated library name.
+// Note: This header defines a simplication of a shared library
 
 #ifndef CLASS_LOADER__META_OBJECT_HPP_
 #define CLASS_LOADER__META_OBJECT_HPP_
@@ -148,7 +147,7 @@ public:
    * @param name The literal name of the class.
    */
   AbstractMetaObject(const std::string & class_name, const std::string & base_class_name)
-  : AbstractMetaObjectBase(class_name, base_class_name)
+  : AbstractMetaObjectBase(class_name, base_class_name, typeid(B).name())
   {
   }
 

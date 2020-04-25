@@ -2,18 +2,25 @@
 Changelog for package class_loader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.3.3 (2020-03-13)
+2.0.0 (2020-04-25)
 ------------------
+* Export CMake targets in a addition to include directories / libraries. (`#147 <https://github.com/ros/class_loader/issues/147>`_)
+* Fixed references to poco in error strings. (`#144 <https://github.com/ros/class_loader/issues/144>`_)
+* Removed poco dependency. Shared library management is now provided by rcpputils. (`#139 <https://github.com/ros/class_loader/issues/139>`_)
+* Add missing LICENSE file, matching 3-clause BSD (`#137 <https://github.com/ros/class_loader/issues/137>`_)
+* Code style change: wrap after open parenthesis if not in one line (`#138 <https://github.com/ros/class_loader/issues/138>`_)
+* Fix Travis on macOS. (`#135 <https://github.com/ros/class_loader/issues/135>`_)
 * Use .empty() to check for an empty string. (`#132 <https://github.com/ros/class_loader/issues/132>`_)
-* Fix travis on macOS. (`#135 <https://github.com/ros/class_loader/issues/135>`_)
-* Contributors: Chris Lalancette
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Dirk Thomas, Jorge Perez
 
-1.3.2 (2019-07-30)
+1.4.0 (2019-09-18)
 ------------------
-* Correctly export class_loader library (`#129 <https://github.com/ros/class_loader/pull/129>`_)
-* Contributors: Shane Loretz
+* Fixed setting AbstractMetaObjectBase base class typeid. (`#127 <https://github.com/nuclearsandwich/class_loader/issues/127>`_)
+* Corrected export of class_loader library. (`#129 <https://github.com/nuclearsandwich/class_loader/issues/129>`_)
+* Reduced the number of threads spun up in stress test. (`#128 <https://github.com/nuclearsandwich/class_loader/issues/128>`_)
+* Contributors: Emerson Knapp, Shane Loretz, bpwilcox
 
-1.3.1 (2019-05.08)
+1.3.1 (2019-05-08)
 ------------------
 * Using ament_target_dependencies when possible (`#124 <https://github.com/ros/class_loader/issues/124>`_)
 * Contributors: ivanpauno
