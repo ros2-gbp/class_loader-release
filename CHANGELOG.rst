@@ -2,28 +2,14 @@
 Changelog for package class_loader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.1.2 (2021-04-12)
+2.0.2 (2021-04-14)
 ------------------
-* Remove travis. (`#182 <https://github.com/ros/class_loader/issues/182>`_)
-* Contributors: Chris Lalancette
-
-2.1.1 (2021-04-06)
-------------------
-* Change index.ros.org -> docs.ros.org. (`#181 <https://github.com/ros/class_loader/issues/181>`_)
-* Contributors: Chris Lalancette
-
-2.1.0 (2021-03-18)
-------------------
-* Fix ternary null check found by clang static analysis (`#176 <https://github.com/ros/class_loader/issues/176>`_)
-* Update QD to QL 1 (`#177 <https://github.com/ros/class_loader/issues/177>`_)
-* Updated console_bridge QL in QD
-* Update package maintainers. (`#169 <https://github.com/ros/class_loader/issues/169>`_)
-* enable building a static library (`#163 <https://github.com/ros/class_loader/issues/163>`_)
-* Update Quality Declaration to reflect QL 2 (`#160 <https://github.com/ros/class_loader/issues/160>`_).
+* Update QD to QL 1 (`#178 <https://github.com/ros/class_loader/issues/178>`_)
+* Update console_bridge QL in QD
 * Increase coverage with a graveyard behavior test and unmanaged instance test (`#159 <https://github.com/ros/class_loader/issues/159>`_)
 * Add Security Vulnerability Policy pointing to REP-2006. (`#157 <https://github.com/ros/class_loader/issues/157>`_)
 * Clean up and improve documentation (`#156 <https://github.com/ros/class_loader/issues/156>`_)
-* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Dirk Thomas, Michel Hidalgo, Stephen Brawner, ahcorde, brawner
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Louise Poubel, Michel Hidalgo, Stephen Brawner
 
 2.0.1 (2020-05-26)
 ------------------
