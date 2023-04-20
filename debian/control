@@ -1,0 +1,13 @@
+Source: ros-iron-class-loader
+Section: misc
+Priority: optional
+Maintainer: Geoffrey Biggs <geoff@openrobotics.org>
+Build-Depends: debhelper (>= 9.0.0), libconsole-bridge-dev, ros-iron-ament-cmake, ros-iron-ament-cmake-gtest <!nocheck>, ros-iron-ament-cmake-ros, ros-iron-ament-lint-auto <!nocheck>, ros-iron-ament-lint-common <!nocheck>, ros-iron-console-bridge-vendor, ros-iron-rcpputils, ros-iron-ros-workspace
+Homepage: http://ros.org/wiki/class_loader
+Standards-Version: 3.9.2
+
+Package: ros-iron-class-loader
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libconsole-bridge-dev, ros-iron-console-bridge-vendor, ros-iron-rcpputils, ros-iron-ros-workspace
+Description: The class_loader package is a ROS-independent package for loading plugins during runtime and the foundation of the higher level ROS &quot;pluginlib&quot; library.
+ class_loader utilizes the host operating system's runtime loader to open runtime libraries (e.g. .so/.dll files), introspect the library for exported plugin classes, and allows users to instantiate objects of these exported classes without the explicit declaration (i.e. header file) for those classes.
