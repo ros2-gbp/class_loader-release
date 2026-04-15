@@ -1,3 +1,26 @@
+## class_loader (rolling) - 2.9.4-1
+
+The packages in the `class_loader` repository were released into the `rolling` distro by running `/usr/local/google/home/sloretz/projects/lyrical/env3/bin/bloom-release class_loader --rosdistro rolling --track rolling` on `Wed, 15 Apr 2026 01:51:26 -0000`
+
+The `class_loader` package was released.
+
+Version of package(s) in repository `class_loader`:
+
+- upstream repository: https://github.com/ros/class_loader.git
+- release repository: https://github.com/ros2-gbp/class_loader-release.git
+- rosdistro version: `2.9.3-1`
+- old version: `2.9.3-1`
+- new version: `2.9.4-1`
+
+Versions of tools used:
+
+- bloom version: `0.13.0`
+- catkin_pkg version: `1.1.0`
+- rosdep version: `0.26.0`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## class_loader (rolling) - 2.9.3-1
 
 The packages in the `class_loader` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --rosdistro rolling --track rolling class_loader` on `Thu, 09 Apr 2026 08:50:18 -0000`
