@@ -36,7 +36,7 @@
 class Robot : public Base
 {
 public:
-  void saySomething() override
+  void saySomething()
   {
     printf("Beep boop\n");
   }
@@ -45,7 +45,7 @@ public:
 class Alien : public Base
 {
 public:
-  void saySomething() override
+  void saySomething()
   {
     printf("Znornoff!!!\n");
   }
@@ -54,7 +54,7 @@ public:
 class Monster : public Base
 {
 public:
-  void saySomething() override
+  void saySomething()
   {
     printf("BEAAAHHHH\n");
   }
@@ -63,7 +63,7 @@ public:
 class Zombie : public Base
 {
 public:
-  void saySomething() override
+  void saySomething()
   {
     printf("Brains!!!\n");
   }

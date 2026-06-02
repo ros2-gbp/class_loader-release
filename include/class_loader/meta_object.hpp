@@ -36,10 +36,8 @@
 
 #include <string>
 #include <typeinfo>
-#include <utility>
 #include <vector>
 
-#include "class_loader/interface_traits.hpp"
 #include "class_loader/visibility_control.hpp"
 
 namespace class_loader
@@ -154,27 +152,6 @@ protected:
   AbstractMetaObjectBaseImpl * impl_;
 };
 
-template<class ... Ts>
-class AbstractMetaObjectImpl {
-  static_assert(false_v<Ts...>, "Base template selected.");
-};
-
-template<class B, class ... Args>
-class AbstractMetaObjectImpl<B, ConstructorParameters<Args...>>: public AbstractMetaObjectBase {
-protected:
-  using AbstractMetaObjectBase::AbstractMetaObjectBase;
-
-public:
-  /**
-   * @brief Defines the factory interface that the MetaObject must implement.
-   *
-   * @return A pointer of parametric type B to a newly created object.
-   */
-  virtual B * create(Args... args) const = 0;
-  /// Create a new instance of a class.
-  /// Cannot be used for singletons.
-};
-
 /**
  * @class AbstractMetaObject
  * @brief Abstract base class for factories where polymorphic type variable indicates base class for
@@ -183,10 +160,8 @@ public:
  * @parm B The base class interface for the plugin
  */
 template<class B>
-class AbstractMetaObject : public AbstractMetaObjectImpl<B, interface_constructor_parameters_t<B>>
+class AbstractMetaObject : public AbstractMetaObjectBase
 {
-  using Base = AbstractMetaObjectImpl<B, interface_constructor_parameters_t<B>>;
-
 public:
   /**
    * @brief A constructor for this class
@@ -194,40 +169,23 @@ public:
    * @param name The literal name of the class.
    */
   AbstractMetaObject(const std::string & class_name, const std::string & base_class_name)
-  : Base(class_name, base_class_name, typeid(B).name())
+  : AbstractMetaObjectBase(class_name, base_class_name, typeid(B).name())
   {
   }
+
+  /**
+   * @brief Defines the factory interface that the MetaObject must implement.
+   *
+   * @return A pointer of parametric type B to a newly created object.
+   */
+  virtual B * create() const = 0;
+  /// Create a new instance of a class.
+  /// Cannot be used for singletons.
 
 private:
   AbstractMetaObject();
   AbstractMetaObject(const AbstractMetaObject &);
   AbstractMetaObject & operator=(const AbstractMetaObject &);
-};
-
-template<class ... Ts>
-class MetaObjectImpl {
-  static_assert(false_v<Ts...>, "Base template selected.");
-};
-
-template<class C, class B, class ... Args>
-class MetaObjectImpl<C, B, ConstructorParameters<Args...>>: public AbstractMetaObject<B>
-{
-protected:
-  using AbstractMetaObject<B>::AbstractMetaObject;
-
-public:
-  static_assert(std::is_constructible_v<C, Args...>,
-    "Plugin must be constructible with arguments defined by the interface.");
-  /**
-   * @brief The factory interface to generate an object. The object has type C in reality, though a
-   * pointer of the base class type is returned.
-   *
-   * @return A pointer to a newly created plugin with the base class type (type parameter B)
-   */
-  B * create(Args... args) const override
-  {
-    return new C(std::forward<Args>(args)...);
-  }
 };
 
 /**
@@ -238,17 +196,26 @@ public:
  * @parm B The base class interface for the plugin
  */
 template<class C, class B>
-class MetaObject : public MetaObjectImpl<C, B, interface_constructor_parameters_t<B>>
+class MetaObject : public AbstractMetaObject<B>
 {
-  using Base = MetaObjectImpl<C, B, interface_constructor_parameters_t<B>>;
-
 public:
   /**
    * @brief Constructor for the class
    */
   MetaObject(const std::string & class_name, const std::string & base_class_name)
-  : Base(class_name, base_class_name)
+  : AbstractMetaObject<B>(class_name, base_class_name)
   {
+  }
+
+  /**
+   * @brief The factory interface to generate an object. The object has type C in reality, though a
+   * pointer of the base class type is returned.
+   *
+   * @return A pointer to a newly created plugin with the base class type (type parameter B)
+   */
+  B * create() const
+  {
+    return new C;
   }
 };
 

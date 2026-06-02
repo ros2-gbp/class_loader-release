@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.5)
 
 project(class_loader)
 
@@ -14,8 +14,9 @@ endif()
 set(CLASS_LOADER_IGNORE_AMENT FALSE CACHE BOOL
   "Do not use ament when building this package.")
 if(NOT CLASS_LOADER_IGNORE_AMENT)
-  find_package(ament_cmake REQUIRED)
-  set(explicit_library_type "SHARED")
+  find_package(ament_cmake)
+  find_package(ament_cmake_ros REQUIRED)
+  set(explicit_library_type "")
 else()
   set(explicit_library_type "SHARED")
 endif()

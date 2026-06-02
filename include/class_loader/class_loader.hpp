@@ -39,7 +39,6 @@
 #include <memory>
 #include <mutex>
 #include <string>
-#include <utility>
 #include <vector>
 
 // TODO(mikaelarguedas) remove this once console_bridge complies with this
@@ -120,16 +119,13 @@ public:
    * if the library is not yet loaded (which typically happens when in "On Demand Load/Unload" mode).
    *
    * @param derived_class_name The name of the class we want to create (@see getAvailableClasses())
-   * @param args Arguments for the constructor of the derived class (types defined
-   * by InterfaceTraits of the Base class)
    * @return A std::shared_ptr<Base> to newly created plugin object
    */
-  template<class Base, class ... Args,
-    std::enable_if_t<is_interface_constructible_v<Base, Args...>, bool> = true>
-  std::shared_ptr<Base> createInstance(const std::string & derived_class_name, Args &&... args)
+  template<class Base>
+  std::shared_ptr<Base> createInstance(const std::string & derived_class_name)
   {
     return std::shared_ptr<Base>(
-      createRawInstance<Base>(derived_class_name, true, std::forward<Args>(args)...),
+      createRawInstance<Base>(derived_class_name, true),
       std::bind(&ClassLoader::onPluginDeletion<Base>, this, std::placeholders::_1)
     );
   }
@@ -145,15 +141,12 @@ public:
    *
    * @param derived_class_name
    *   The name of the class we want to create (@see getAvailableClasses()).
-   * @param args Arguments for the constructor of the derived class (types defined
-   * by InterfaceTraits of the Base class)
    * @return A std::unique_ptr<Base> to newly created plugin object.
    */
-  template<class Base, class ... Args,
-    std::enable_if_t<is_interface_constructible_v<Base, Args...>, bool> = true>
-  UniquePtr<Base> createUniqueInstance(const std::string & derived_class_name, Args &&... args)
+  template<class Base>
+  UniquePtr<Base> createUniqueInstance(const std::string & derived_class_name)
   {
-    Base * raw = createRawInstance<Base>(derived_class_name, true, std::forward<Args>(args)...);
+    Base * raw = createRawInstance<Base>(derived_class_name, true);
     return std::unique_ptr<Base, DeleterType<Base>>(
       raw,
       std::bind(&ClassLoader::onPluginDeletion<Base>, this, std::placeholders::_1)
@@ -171,15 +164,12 @@ public:
    *
    * @param derived_class_name
    *   The name of the class we want to create (@see getAvailableClasses()).
-   * @param args Arguments for the constructor of the derived class (types defined
-   * by InterfaceTraits of the Base class)
    * @return An unmanaged (i.e. not a shared_ptr) Base* to newly created plugin object.
    */
-  template<class Base, class ... Args,
-    std::enable_if_t<is_interface_constructible_v<Base, Args...>, bool> = true>
-  Base * createUnmanagedInstance(const std::string & derived_class_name, Args &&... args)
+  template<class Base>
+  Base * createUnmanagedInstance(const std::string & derived_class_name)
   {
-    return createRawInstance<Base>(derived_class_name, false, std::forward<Args>(args)...);
+    return createRawInstance<Base>(derived_class_name, false);
   }
 
   /**
@@ -307,13 +297,10 @@ private:
    * @param managed
    *   If true, the returned pointer is assumed to be wrapped in a smart
    *   pointer by the caller.
-   * @param args Arguments for the constructor of the derived class (types defined
-   * by InterfaceTraits of the Base class)
    * @return A Base* to newly created plugin object.
    */
-  template<class Base, class ... Args,
-    std::enable_if_t<is_interface_constructible_v<Base, Args...>, bool> = true>
-  Base * createRawInstance(const std::string & derived_class_name, bool managed, Args &&... args)
+  template<class Base>
+  Base * createRawInstance(const std::string & derived_class_name, bool managed)
   {
     if (!managed) {
       this->setUnmanagedInstanceBeenCreated(true);
@@ -337,8 +324,8 @@ private:
       loadLibrary();
     }
 
-    Base * obj = class_loader::impl::createInstance<Base>(derived_class_name, this,
-        std::forward<Args>(args)...);
+    Base * obj = class_loader::impl::createInstance<Base>(derived_class_name, this);
+    assert(obj != NULL);  // Unreachable assertion if createInstance() throws on failure.
 
     if (managed) {
       std::lock_guard<std::recursive_mutex> lock(plugin_ref_count_mutex_);
@@ -377,7 +364,7 @@ private:
   std::recursive_mutex load_ref_count_mutex_;
   int plugin_ref_count_;
   std::recursive_mutex plugin_ref_count_mutex_;
-  static bool has_unmanaged_instance_been_created_;
+  static bool has_unmananged_instance_been_created_;
 };
 
 }  // namespace class_loader
