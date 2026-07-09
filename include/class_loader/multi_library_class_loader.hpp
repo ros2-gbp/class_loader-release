@@ -32,10 +32,12 @@
 #ifndef CLASS_LOADER__MULTI_LIBRARY_CLASS_LOADER_HPP_
 #define CLASS_LOADER__MULTI_LIBRARY_CLASS_LOADER_HPP_
 
+#include <algorithm>
 #include <cstddef>
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 // TODO(mikaelarguedas) remove this once console_bridge complies with this
@@ -55,9 +57,9 @@
 namespace class_loader
 {
 
-typedef std::string LibraryPath;
-typedef std::map<LibraryPath, class_loader::ClassLoader *> LibraryToClassLoaderMap;
-typedef std::vector<ClassLoader *> ClassLoaderVector;
+using LibraryPath = std::string;
+using LibraryToClassLoaderMap = std::map<LibraryPath, class_loader::ClassLoader *>;
+using ClassLoaderVector = std::vector<ClassLoader *>;
 
 class MultiLibraryClassLoaderImpl;
 
@@ -87,10 +89,14 @@ public:
    *
    * @param Base - polymorphic type indicating base class
    * @param class_name - the name of the concrete plugin class we want to instantiate
+   * @param args - arguments for the constructor of the derived class (types defined
+   * by InterfaceTraits of the Base class)
    * @return A std::shared_ptr<Base> to newly created plugin
    */
-  template<class Base>
-  std::shared_ptr<Base> createInstance(const std::string & class_name)
+  template<class Base, class ... Args>
+  requires InterfaceConstructible<Base, Args...>
+  [[nodiscard]] std::shared_ptr<Base> createInstance(
+    const std::string & class_name, Args &&... args)
   {
     CONSOLE_BRIDGE_logDebug(
       "class_loader::MultiLibraryClassLoader: "
@@ -105,7 +111,7 @@ public:
               "was explicitly loaded through MultiLibraryClassLoader::loadLibrary()");
     }
 
-    return loader->createInstance<Base>(class_name);
+    return loader->createInstance<Base>(class_name, std::forward<Args>(args)...);
   }
 
   /**
@@ -115,11 +121,14 @@ public:
    * @param Base - polymorphic type indicating base class
    * @param class_name - the name of the concrete plugin class we want to instantiate
    * @param library_path - the library from which we want to create the plugin
+   * @param args - arguments for the constructor of the derived class (types defined
+   * by InterfaceTraits of the Base class)
    * @return A std::shared_ptr<Base> to newly created plugin
    */
-  template<class Base>
-  std::shared_ptr<Base> createInstance(
-    const std::string & class_name, const std::string & library_path)
+  template<class Base, class ... Args>
+  requires InterfaceConstructible<Base, Args...>
+  [[nodiscard]] std::shared_ptr<Base> createInstance(
+    const std::string & class_name, const std::string & library_path, Args &&... args)
   {
     ClassLoader * loader = getClassLoaderForLibrary(library_path);
     if (nullptr == loader) {
@@ -128,7 +137,7 @@ public:
               "MultiLibraryClassLoader bound to library " + library_path +
               " Ensure you called MultiLibraryClassLoader::loadLibrary()");
     }
-    return loader->createInstance<Base>(class_name);
+    return loader->createInstance<Base>(class_name, std::forward<Args>(args)...);
   }
 
   /// Creates an instance of an object of given class name with ancestor class Base
@@ -138,10 +147,14 @@ public:
    *
    * @param Base - polymorphic type indicating base class
    * @param class_name - the name of the concrete plugin class we want to instantiate
+   * @param args - arguments for the constructor of the derived class (types defined
+   * by InterfaceTraits of the Base class)
    * @return A unique pointer to newly created plugin
    */
-  template<class Base>
-  ClassLoader::UniquePtr<Base> createUniqueInstance(const std::string & class_name)
+  template<class Base, class ... Args>
+  requires InterfaceConstructible<Base, Args...>
+  [[nodiscard]] ClassLoader::UniquePtr<Base> createUniqueInstance(
+    const std::string & class_name, Args &&... args)
   {
     CONSOLE_BRIDGE_logDebug(
       "class_loader::MultiLibraryClassLoader: Attempting to create instance of class type %s.",
@@ -154,7 +167,7 @@ public:
               "Make sure that the library exists and was explicitly loaded through "
               "MultiLibraryClassLoader::loadLibrary()");
     }
-    return loader->createUniqueInstance<Base>(class_name);
+    return loader->createUniqueInstance<Base>(class_name, std::forward<Args>(args)...);
   }
 
   /// Creates an instance of an object of given class name with ancestor class Base
@@ -164,11 +177,16 @@ public:
    * @param Base - polymorphic type indicating base class
    * @param class_name - the name of the concrete plugin class we want to instantiate
    * @param library_path - the library from which we want to create the plugin
+   * @param args - arguments for the constructor of the derived class (types defined
+   * by InterfaceTraits of the Base class)
    * @return A unique pointer to newly created plugin
    */
-  template<class Base>
-  ClassLoader::UniquePtr<Base>
-  createUniqueInstance(const std::string & class_name, const std::string & library_path)
+  template<class Base, class ... Args>
+  requires InterfaceConstructible<Base, Args...>
+  [[nodiscard]] ClassLoader::UniquePtr<Base>
+  createUniqueInstance(
+    const std::string & class_name, const std::string & library_path,
+    Args &&... args)
   {
     ClassLoader * loader = getClassLoaderForLibrary(library_path);
     if (nullptr == loader) {
@@ -177,7 +195,7 @@ public:
               "MultiLibraryClassLoader bound to library " + library_path +
               " Ensure you called MultiLibraryClassLoader::loadLibrary()");
     }
-    return loader->createUniqueInstance<Base>(class_name);
+    return loader->createUniqueInstance<Base>(class_name, std::forward<Args>(args)...);
   }
 
   /**
@@ -188,17 +206,20 @@ public:
    *
    * @param Base - polymorphic type indicating base class
    * @param class_name - the name of the concrete plugin class we want to instantiate
+   * @param args - arguments for the constructor of the derived class (types defined
+   * by InterfaceTraits of the Base class)
    * @return An unmanaged Base* to newly created plugin
    */
-  template<class Base>
-  Base * createUnmanagedInstance(const std::string & class_name)
+  template<class Base, class ... Args>
+  requires InterfaceConstructible<Base, Args...>
+  [[nodiscard]] Base * createUnmanagedInstance(const std::string & class_name, Args &&... args)
   {
     ClassLoader * loader = getClassLoaderForClass<Base>(class_name);
     if (nullptr == loader) {
       throw class_loader::CreateClassException(
               "MultiLibraryClassLoader: Could not create class of type " + class_name);
     }
-    return loader->createUnmanagedInstance<Base>(class_name);
+    return loader->createUnmanagedInstance<Base>(class_name, std::forward<Args>(args)...);
   }
 
   /**
@@ -209,9 +230,14 @@ public:
    * @param Base - polymorphic type indicating Base class
    * @param class_name - name of class for which we want to create instance
    * @param library_path - the fully qualified path to the runtime library
+   * @param args - arguments for the constructor of the derived class (types defined
+   * by InterfaceTraits of the Base class)
    */
-  template<class Base>
-  Base * createUnmanagedInstance(const std::string & class_name, const std::string & library_path)
+  template<class Base, class ... Args>
+  requires InterfaceConstructible<Base, Args...>
+  [[nodiscard]] Base * createUnmanagedInstance(
+    const std::string & class_name, const std::string & library_path,
+    Args &&... args)
   {
     ClassLoader * loader = getClassLoaderForLibrary(library_path);
     if (nullptr == loader) {
@@ -220,7 +246,7 @@ public:
               "bound to library " + library_path +
               " Ensure you called MultiLibraryClassLoader::loadLibrary()");
     }
-    return loader->createUnmanagedInstance<Base>(class_name);
+    return loader->createUnmanagedInstance<Base>(class_name, std::forward<Args>(args)...);
   }
 
   /**
@@ -231,11 +257,10 @@ public:
    * @return true if loaded, false otherwise
    */
   template<class Base>
-  bool isClassAvailable(const std::string & class_name) const
+  [[nodiscard]] bool isClassAvailable(const std::string & class_name) const
   {
     std::vector<std::string> available_classes = getAvailableClasses<Base>();
-    return available_classes.end() != std::find(
-      available_classes.begin(), available_classes.end(), class_name);
+    return std::ranges::find(available_classes, class_name) != available_classes.end();
   }
 
   /**
@@ -244,7 +269,7 @@ public:
    * @param library_path - The full qualified path to the runtime library
    * @return true if library is loaded, false otherwise
    */
-  bool isLibraryAvailable(const std::string & library_path) const;
+  [[nodiscard]] bool isLibraryAvailable(const std::string & library_path) const;
 
   /**
    * @brief Gets a list of all classes that are loaded by the class loader
@@ -253,7 +278,7 @@ public:
    * @return A vector<string> of the available classes
    */
   template<class Base>
-  std::vector<std::string> getAvailableClasses() const
+  [[nodiscard]] std::vector<std::string> getAvailableClasses() const
   {
     std::vector<std::string> available_classes;
     for (auto & loader : getAllAvailableClassLoaders()) {
@@ -271,9 +296,10 @@ public:
    * @return A vector<string> of the available classes in the passed library
    */
   template<class Base>
-  std::vector<std::string> getAvailableClassesForLibrary(const std::string & library_path)
+  [[nodiscard]] std::vector<std::string> getAvailableClassesForLibrary(
+    const std::string & library_path) const
   {
-    ClassLoader * loader = getClassLoaderForLibrary(library_path);
+    const ClassLoader * loader = getClassLoaderForLibrary(library_path);
     if (nullptr == loader) {
       throw class_loader::NoClassLoaderExistsException(
               "There is no ClassLoader in MultiLibraryClassLoader bound to library " +
@@ -288,7 +314,7 @@ public:
    *
    * @return A list of libraries opened by this class loader
    */
-  std::vector<std::string> getRegisteredLibraries() const;
+  [[nodiscard]] std::vector<std::string> getRegisteredLibraries() const;
 
   /**
    * @brief Loads a library into memory for this class loader
@@ -322,6 +348,7 @@ private:
    * @return A pointer to the ClassLoader*, == nullptr if not found
    */
   ClassLoader * getClassLoaderForLibrary(const std::string & library_path);
+  const ClassLoader * getClassLoaderForLibrary(const std::string & library_path) const;
 
   /// Gets a handle to the class loader corresponding to a specific class.
   /**
@@ -355,7 +382,7 @@ private:
    */
   void shutdownAllClassLoaders();
 
-  MultiLibraryClassLoaderImpl * impl_;
+  std::unique_ptr<MultiLibraryClassLoaderImpl> impl_;
 };
 
 

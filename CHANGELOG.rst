@@ -2,11 +2,49 @@
 Changelog for package class_loader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.7.1 (2026-06-02)
+3.0.1 (2026-07-09)
+------------------
+* concurrent accesses well-defined (`#231 <https://github.com/ros/class_loader//issues/231>`_)
+* Cpp20 part3 (`#230 <https://github.com/ros/class_loader//issues/230>`_)
+* Cpp20 part2 (`#229 <https://github.com/ros/class_loader//issues/229>`_)
+* Include CPP20 and related changes (`#228 <https://github.com/ros/class_loader//issues/228>`_)
+* Contributors: Alejandro Hernández Cordero
+
+3.0.0 (2026-05-06)
+------------------
+
+2.9.4 (2026-04-15)
+------------------
+
+* Fix compiler error with clang (`#227 <https://github.com/ros/class_loader/issues/227>`_)
+* Contributors: Alejandro Hernández Cordero
+
+2.9.3 (2026-04-09)
+------------------
+* Remove ament_cmake_ros dependency (`#226 <https://github.com/ros/class_loader/issues/226>`_)
+  The dependent ament_cmake_ros package transitively pulls in RMW-layer packages which is unnecessarily heavy to class_loader that is supposed to be an independent plugin loading library. This commit removes the ament_cmake_ros dependency and replaces with a plain ament_cmake with an explicit SHARED library type to keep the dependency minimal.
+* Improvements (`#225 <https://github.com/ros/class_loader/issues/225>`_)
+* Clean up tests (`#224 <https://github.com/ros/class_loader/issues/224>`_)
+* Contributors: Alejandro Hernández Cordero, CY Chen
+
+2.9.2 (2026-02-23)
+------------------
+* Add support for passing arguments to constructors (`#223 <https://github.com/ros/class_loader//issues/223>`_)
+* Contributors: pum1k
+
+2.9.1 (2025-10-17)
+------------------
+* Thread and Address Sanitizer CI (`#198 <https://github.com/ros/class_loader/issues/198>`_)
+* Update cmake requirement
+* Contributors: Tyler Weaver, mosfet80
+
+2.9.0 (2025-04-25)
 ------------------
 * Remove CODEOWNERS and mirror-rolling-to-main workflow (`#215 <https://github.com/ros/class_loader/issues/215>`_)
-  (cherry picked from commit 464fd149cd82e2259d3e1f6f77d6669d1819e124)
 * Contributors: Alejandro Hernández Cordero
+
+2.8.0 (2024-04-26)
+------------------
 
 2.7.0 (2023-12-26)
 ------------------

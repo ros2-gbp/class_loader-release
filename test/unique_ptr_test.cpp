@@ -34,6 +34,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <tuple>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -45,6 +46,7 @@
 
 const std::string LIBRARY_1 = class_loader::systemLibraryFormat("class_loader_TestPlugins1");  // NOLINT
 const std::string LIBRARY_2 = class_loader::systemLibraryFormat("class_loader_TestPlugins2");  // NOLINT
+const std::string LIBRARY_3 = class_loader::systemLibraryFormat("class_loader_TestPlugins3");  // NOLINT
 
 using class_loader::ClassLoader;
 
@@ -87,6 +89,25 @@ TEST(ClassLoaderUniquePtrTest, basicLoadTwiceSameTime) {
   }
 }
 
+TEST(ClassLoaderUniquePtrTest, constructorLoad) {
+  try {
+    ClassLoader loader1(LIBRARY_3, false);
+    ASSERT_EQ(loader1.createUniqueInstance<BaseWithInterfaceCtor>("Identity", "identity 1",
+      std::make_unique<int>(1))->get_number(), 1);
+    ASSERT_EQ(loader1.createUniqueInstance<BaseWithInterfaceCtor>("Identity", "identity 2",
+      std::make_unique<int>(10))->get_number(),
+      10);
+    ASSERT_EQ(loader1.createUniqueInstance<BaseWithInterfaceCtor>("Double", "double 1",
+      std::make_unique<int>(1))->get_number(), 2);
+    ASSERT_EQ(loader1.createUniqueInstance<BaseWithInterfaceCtor>("Double", "double 2",
+      std::make_unique<int>(10))->get_number(), 20);
+    ASSERT_NO_THROW(class_loader::impl::printDebugInfoToScreen());
+    SUCCEED();
+  } catch (class_loader::ClassLoaderException & e) {
+    FAIL() << "ClassLoaderException: " << e.what() << "\n";
+  }
+}
+
 TEST(ClassLoaderUniquePtrTest, basicLoadFailures) {
   ClassLoader loader1(LIBRARY_1, false);
   ClassLoader loader2("", false);
@@ -99,7 +120,8 @@ TEST(ClassLoaderUniquePtrTest, basicLoadFailures) {
 TEST(ClassLoaderUniquePtrTest, MultiLibraryClassLoaderFailures) {
   class_loader::MultiLibraryClassLoader loader(true);
   loader.loadLibrary(LIBRARY_1);
-  EXPECT_THROW(loader.createUniqueInstance<Base>("Cat2"), class_loader::ClassLoaderException);
+  EXPECT_THROW(std::ignore = loader.createUniqueInstance<Base>("Cat2"),
+    class_loader::ClassLoaderException);
 }
 
 TEST(ClassLoaderUniquePtrTest, LibrariesUsedByClassLoader) {
@@ -242,10 +264,20 @@ void testMultiClassLoader(bool lazy)
     class_loader::MultiLibraryClassLoader loader(lazy);
     loader.loadLibrary(LIBRARY_1);
     loader.loadLibrary(LIBRARY_2);
+    loader.loadLibrary(LIBRARY_3);
     for (int i = 0; i < 2; ++i) {
       loader.createUniqueInstance<Base>("Cat")->saySomething();
       loader.createUniqueInstance<Base>("Dog")->saySomething();
       loader.createUniqueInstance<Base>("Robot")->saySomething();
+      ASSERT_EQ(loader.createUniqueInstance<BaseWithInterfaceCtor>("Identity", "identity 1",
+        std::make_unique<int>(1))->get_number(), 1);
+      ASSERT_EQ(loader.createUniqueInstance<BaseWithInterfaceCtor>("Identity", "identity 2",
+        std::make_unique<int>(10))->get_number(),
+        10);
+      ASSERT_EQ(loader.createUniqueInstance<BaseWithInterfaceCtor>("Double", "double 1",
+        std::make_unique<int>(1))->get_number(), 2);
+      ASSERT_EQ(loader.createUniqueInstance<BaseWithInterfaceCtor>("Double", "double 2",
+        std::make_unique<int>(10))->get_number(), 20);
     }
   } catch (class_loader::ClassLoaderException & e) {
     FAIL() << "ClassLoaderException: " << e.what() << "\n";
@@ -265,7 +297,7 @@ TEST(MultiClassLoaderUniquePtrTest, nonLazyLoad) {
 }
 TEST(MultiClassLoaderUniquePtrTest, noWarningOnLazyLoad) {
   try {
-    ClassLoader::UniquePtr<Base> cat = nullptr, dog = nullptr, rob = nullptr;
+    ClassLoader::UniquePtr<Base> cat, dog, rob;
     {
       class_loader::MultiLibraryClassLoader loader(true);
       loader.loadLibrary(LIBRARY_1);

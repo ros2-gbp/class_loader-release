@@ -2,6 +2,11 @@ find_package(ament_cmake_gtest REQUIRED)
 
 include("../cmake/class_loader_hide_library_symbols.cmake")
 
+# Link this 'library' to set the compile-time options requested
+add_library(project_options INTERFACE)
+include(../cmake/sanitizers.cmake)
+enable_sanitizers(project_options)
+
 add_library(${PROJECT_NAME}_TestPlugins1 EXCLUDE_FROM_ALL SHARED plugins1.cpp)
 target_link_libraries(${PROJECT_NAME}_TestPlugins1 ${PROJECT_NAME})
 class_loader_hide_library_symbols(${PROJECT_NAME}_TestPlugins1)
@@ -9,6 +14,10 @@ class_loader_hide_library_symbols(${PROJECT_NAME}_TestPlugins1)
 add_library(${PROJECT_NAME}_TestPlugins2 EXCLUDE_FROM_ALL SHARED plugins2.cpp)
 target_link_libraries(${PROJECT_NAME}_TestPlugins2 ${PROJECT_NAME})
 class_loader_hide_library_symbols(${PROJECT_NAME}_TestPlugins2)
+
+add_library(${PROJECT_NAME}_TestPlugins3 EXCLUDE_FROM_ALL SHARED plugins3.cpp)
+target_link_libraries(${PROJECT_NAME}_TestPlugins3 ${PROJECT_NAME})
+class_loader_hide_library_symbols(${PROJECT_NAME}_TestPlugins3)
 
 # These plugins are loaded using dlopen() with RTLD_GLOBAL in utest and may cause side effects
 # in other tests if they are used elsewhere.
@@ -27,13 +36,25 @@ ament_add_gtest(${PROJECT_NAME}_utest utest.cpp
 )
 
 if(TARGET ${PROJECT_NAME}_utest)
-  target_link_libraries(${PROJECT_NAME}_utest ${PROJECT_NAME})
+  if(ament_cmake_FOUND)
+    target_include_directories(${PROJECT_NAME}_utest
+      PUBLIC "../include")
+    target_link_libraries(${PROJECT_NAME}_utest
+      console_bridge::console_bridge)
+  else()
+    target_include_directories(${PROJECT_NAME}_utest
+      PUBLIC "../include" ${console_bridge_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME}_utest)
+  endif()
+  target_link_libraries(${PROJECT_NAME}_utest ${PROJECT_NAME} project_options)
+
   if(NOT WIN32)
     target_link_libraries(${PROJECT_NAME}_utest pthread)
   endif()
   add_dependencies(${PROJECT_NAME}_utest
     ${PROJECT_NAME}_TestPlugins1
     ${PROJECT_NAME}_TestPlugins2
+    ${PROJECT_NAME}_TestPlugins3
     ${PROJECT_NAME}_TestGlobalPlugins)
 endif()
 
@@ -41,13 +62,23 @@ ament_add_gtest(${PROJECT_NAME}_unique_ptr_test unique_ptr_test.cpp
   APPEND_LIBRARY_DIRS "${append_library_dirs}"
 )
 if(TARGET ${PROJECT_NAME}_unique_ptr_test)
-  target_link_libraries(${PROJECT_NAME}_unique_ptr_test ${PROJECT_NAME})
+  if(ament_cmake_FOUND)
+    target_include_directories(${PROJECT_NAME}_unique_ptr_test
+      PUBLIC "../include")
+  else()
+    target_include_directories(${PROJECT_NAME}_unique_ptr_test
+      PUBLIC "../include")
+    target_link_libraries(${PROJECT_NAME}_unique_ptr_test)
+  endif()
+  target_link_libraries(${PROJECT_NAME}_unique_ptr_test ${PROJECT_NAME} project_options)
+
   if(NOT WIN32)
     target_link_libraries(${PROJECT_NAME}_unique_ptr_test pthread)
   endif()
   add_dependencies(${PROJECT_NAME}_unique_ptr_test
     ${PROJECT_NAME}_TestPlugins1
-    ${PROJECT_NAME}_TestPlugins2)
+    ${PROJECT_NAME}_TestPlugins2
+    ${PROJECT_NAME}_TestPlugins3)
 endif()
 
 add_subdirectory(fviz_case_study)
